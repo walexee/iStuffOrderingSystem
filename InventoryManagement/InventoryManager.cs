@@ -38,24 +38,17 @@ namespace InventoryManagement
 
                 TellInventoryLevel(new LowInventoryLevel(PRODUCT_ID, _inventoryLevel));
 
-                ReplenishInventory().ContinueWith(x => {
-                    _inventoryLevel += x.Result;
+                ReplenishInventory(100);
 
-                    TellInventoryLevel(new InventoryReplenished(PRODUCT_ID, _inventoryLevel));
-                });
+                TellInventoryLevel(new InventoryReplenished(PRODUCT_ID, _inventoryLevel));
             });
 
             
         }
 
-        private Task<int> ReplenishInventory()
+        private void ReplenishInventory(int requestedAmount)
         {
-            return Task.Run<int>(() =>
-                    {
-                        Thread.Sleep(30000);
-
-                        return 100;
-                    });
+            _inventoryLevel += requestedAmount;
         }
 
         private void TellInventoryLevel<T>(T inventoryLevel) where T : InventoryLevel
