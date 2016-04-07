@@ -12,7 +12,7 @@ namespace OrderProcessing.Actors
         public OrderPlacement()
         {
             _backOrders = new Queue<Order>();
-
+            
             Receive<LowInventoryLevel>(message => {
                 Become(ProcessAsBackOrder);
             });

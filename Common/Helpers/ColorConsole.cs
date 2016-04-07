@@ -26,12 +26,10 @@ namespace Common.Helpers
 
         public static void WriteLine(ConsoleColor color, string text, params object[] args)
         {
-            var originalColor = Console.ForegroundColor;
-
             Console.ForegroundColor = color;
             Console.WriteLine(text, args);
 
-            Console.ForegroundColor = originalColor;
+            Console.ResetColor();
         }
     }
 }

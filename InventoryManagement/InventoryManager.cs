@@ -1,15 +1,15 @@
-﻿using Akka.Actor;
-using Akka.Routing;
+﻿using System;
+using Akka.Actor;
+using Common.Messages;
 using System.Threading;
 using System.Threading.Tasks;
-using Common.Messages;
 
 namespace InventoryManagement
 {
     public class InventoryManager : ReceiveActor
     {
         private int _inventoryLevel = 100;
-        private const int PRODUCT_ID = 567437;
+        private const int ProductId = 567437;
         private readonly IActorRef _orderProcessing;
         private readonly IActorRef _shipping;
         private readonly IActorRef _statusUpdateReceiver;
@@ -36,11 +36,11 @@ namespace InventoryManagement
                 if (_inventoryLevel >= 10)
                     return;
 
-                TellInventoryLevel(new LowInventoryLevel(PRODUCT_ID, _inventoryLevel));
+                TellInventoryLevel(new LowInventoryLevel(ProductId, _inventoryLevel));
 
                 ReplenishInventory(100);
 
-                TellInventoryLevel(new InventoryReplenished(PRODUCT_ID, _inventoryLevel));
+                TellInventoryLevel(new InventoryReplenished(ProductId, _inventoryLevel));
             });
 
             
@@ -48,7 +48,12 @@ namespace InventoryManagement
 
         private void ReplenishInventory(int requestedAmount)
         {
-            _inventoryLevel += requestedAmount;
+            Parallel.Invoke(() =>
+            {
+                Thread.Sleep(TimeSpan.FromSeconds(5));
+
+                _inventoryLevel += requestedAmount;
+            });
         }
 
         private void TellInventoryLevel<T>(T inventoryLevel) where T : InventoryLevel

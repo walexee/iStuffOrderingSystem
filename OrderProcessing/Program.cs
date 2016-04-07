@@ -2,7 +2,6 @@
 using Akka.Routing;
 using Common.Helpers;
 using OrderProcessing.Actors;
-using System;
 
 namespace OrderProcessing
 {
