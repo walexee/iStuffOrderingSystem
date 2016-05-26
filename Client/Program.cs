@@ -10,7 +10,8 @@ namespace Client
     {
         static void Main(string[] args)
         {
-            ColorConsole.WriteYellow(">>> CLIENT CONSOLE <<<");
+            Console.Title = "Client Console";
+            //ColorConsole.WriteYellow(">>> CLIENT CONSOLE <<<");
 
             var system = ActorSystem.Create("iStuffOrderingSystem");
             var orderProcessing = system.ActorOf(Props.Empty.WithRouter(FromConfig.Instance), "orderProcessing");

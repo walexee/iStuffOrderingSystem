@@ -17,6 +17,11 @@ namespace Client
             {
                 ColorConsole.WriteGreen("Order ({0}) has been SHIPPED.", message.OrderId);
             });
+
+            Receive<BackOrder>(msg =>
+            {
+                ColorConsole.WriteYellow("order ({0}) is BACK ORDERED", msg.Order.Id);
+            });
         }
     }
 }

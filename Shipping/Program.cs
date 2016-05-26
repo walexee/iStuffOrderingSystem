@@ -1,4 +1,5 @@
-﻿using Akka.Actor;
+﻿using System;
+using Akka.Actor;
 using Akka.Routing;
 using Common.Helpers;
 
@@ -8,7 +9,8 @@ namespace Shipping
     {
         static void Main(string[] args)
         {
-            ColorConsole.WriteYellow(">>> SHIPPING CONSOLE <<<");
+            Console.Title = "Shipping Service";
+            //ColorConsole.WriteYellow(">>> SHIPPING CONSOLE <<<");
 
             var system = ActorSystem.Create("iStuffOrderingSystem");
             var statusUpdateReceiver = system.ActorOf(Props.Empty.WithRouter(FromConfig.Instance), "statusUpdateReceiver");

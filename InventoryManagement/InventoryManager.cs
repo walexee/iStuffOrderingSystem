@@ -3,6 +3,7 @@ using Akka.Actor;
 using Common.Messages;
 using System.Threading;
 using System.Threading.Tasks;
+using Common.Helpers;
 
 namespace InventoryManagement
 {
@@ -27,32 +28,22 @@ namespace InventoryManagement
                     _inventoryLevel -= req.Order.Count;
                     _statusUpdateReceiver.Tell(new OrderFulfilled(req.Order.Id));
                 }
-                else 
+                else
                 {
-                    //Back ordered: Send back for reprocessing
-                    _orderProcessing.Forward(req.Order);
+                    _orderProcessing.Tell(new BackOrder(req.Order));
                 }
 
-                if (_inventoryLevel >= 10)
-                    return;
-
-                TellInventoryLevel(new LowInventoryLevel(ProductId, _inventoryLevel));
-
-                ReplenishInventory(100);
-
-                TellInventoryLevel(new InventoryReplenished(ProductId, _inventoryLevel));
+                if (_inventoryLevel < 10)
+                {
+                    TellInventoryLevel(new LowInventoryLevel(ProductId, _inventoryLevel));
+                }
             });
 
-            
-        }
-
-        private void ReplenishInventory(int requestedAmount)
-        {
-            Parallel.Invoke(() =>
+            Receive<InventoryReplenished>(message =>
             {
-                Thread.Sleep(TimeSpan.FromSeconds(5));
-
-                _inventoryLevel += requestedAmount;
+                ColorConsole.WriteBlue("Inventory replenished by " + message.StockCount);
+                _inventoryLevel += message.StockCount;
+                TellInventoryLevel(message);
             });
         }
 

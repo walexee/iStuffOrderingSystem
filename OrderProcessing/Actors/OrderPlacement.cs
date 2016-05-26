@@ -1,6 +1,7 @@
 ﻿using Akka.Actor;
 using Common.Helpers;
 using System.Collections.Generic;
+using Akka.Routing;
 using Common.Messages;
 
 namespace OrderProcessing.Actors
@@ -12,12 +13,19 @@ namespace OrderProcessing.Actors
         public OrderPlacement()
         {
             _backOrders = new Queue<Order>();
-            
-            Receive<LowInventoryLevel>(message => {
+
+            ProcessOrder();
+        }
+
+        private void AlwaysProcessing()
+        {
+            Receive<LowInventoryLevel>(message =>
+            {
                 Become(ProcessAsBackOrder);
             });
 
-            Receive<InventoryReplenished>(message => {
+            Receive<InventoryReplenished>(message =>
+            {
 
                 Become(ProcessOrder);
 
@@ -27,11 +35,17 @@ namespace OrderProcessing.Actors
                 }
             });
 
-            ProcessOrder();
+            Receive<BackOrder>(message =>
+            {
+                ColorConsole.WriteYellow("Order {0} is back ordered.", message.Order.Id);
+                _backOrders.Enqueue(message.Order);
+            });
         }
 
         private void ProcessAsBackOrder()
         {
+            AlwaysProcessing();
+
             Receive<Order>(order =>
             {
                 ColorConsole.WriteYellow("Order {0} is back ordered.", order.Id);
@@ -41,6 +55,8 @@ namespace OrderProcessing.Actors
 
         private void ProcessOrder()
         {
+            AlwaysProcessing();
+
             Receive<Order>(order =>
             {
                 ColorConsole.WriteYellow("Order {0} has been placed.", order.Id);

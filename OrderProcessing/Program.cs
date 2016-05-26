@@ -1,4 +1,5 @@
-﻿using Akka.Actor;
+﻿using System;
+using Akka.Actor;
 using Akka.Routing;
 using Common.Helpers;
 using OrderProcessing.Actors;
@@ -9,7 +10,8 @@ namespace OrderProcessing
     {
         static void Main(string[] args)
         {
-            ColorConsole.WriteYellow(">>> ORDER PROCESSING CONSOLE <<<");
+            Console.Title = "Order Processing Service";
+            //ColorConsole.WriteYellow(">>> ORDER PROCESSING CONSOLE <<<");
 
             var system = ActorSystem.Create("iStuffOrderingSystem");
 

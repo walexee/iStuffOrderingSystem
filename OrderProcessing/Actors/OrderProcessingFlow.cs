@@ -1,5 +1,6 @@
 ﻿using Akka.Actor;
 using System;
+using Common.Helpers;
 using Common.Messages;
 
 namespace OrderProcessing.Actors
@@ -19,6 +20,11 @@ namespace OrderProcessing.Actors
                 _orderPlacement.Tell(order);
             });
 
+            Receive<BackOrder>(order =>
+            {
+                _orderPlacement.Tell(order);
+            });
+
             Receive<FulfillmentRequest>(f =>
             {
                 _inventory.Tell(f);
@@ -26,11 +32,13 @@ namespace OrderProcessing.Actors
 
             Receive<LowInventoryLevel>(evt =>
             {
+                ColorConsole.WriteBlue("Inventory is low with count of {0}", evt.StockCount);
                 _orderPlacement.Tell(evt);
             });
 
             Receive<InventoryReplenished>(evt =>
             {
+                ColorConsole.WriteBlue("Inventory replenished by {0}", evt.StockCount);
                 _orderPlacement.Tell(evt);
             });
 
