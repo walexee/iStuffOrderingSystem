@@ -18,7 +18,7 @@ namespace InventoryManagement
             var orderProcessing = system.ActorOf(Props.Empty.WithRouter(FromConfig.Instance), "orderProcessing");
             var statusUpdateReceiver = system.ActorOf(Props.Empty.WithRouter(FromConfig.Instance), "statusUpdateReceiver");
             var inventoryMgr = system.ActorOf(Props.Create(() => new InventoryManager(orderProcessing, shipping, statusUpdateReceiver)), "inventory");
-
+            
             while (true)
             {
                 var commnd = Console.ReadLine();

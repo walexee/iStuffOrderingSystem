@@ -32,6 +32,8 @@ namespace Client
                 var itemCount = int.Parse(commnd);
                 var order = new Order(123, itemCount, 123, 78);
 
+                ColorConsole.WriteGreen("Order [{0}: {1}] has been CREATED.", itemCount, order.Id);
+
                 orderProcessing.Tell(order);
             }
 

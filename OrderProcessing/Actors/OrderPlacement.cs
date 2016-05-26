@@ -1,7 +1,6 @@
 ﻿using Akka.Actor;
 using Common.Helpers;
 using System.Collections.Generic;
-using Akka.Routing;
 using Common.Messages;
 
 namespace OrderProcessing.Actors
@@ -9,10 +8,12 @@ namespace OrderProcessing.Actors
     public class OrderPlacement : ReceiveActor
     {
         private readonly Queue<Order> _backOrders;
+        //private readonly IActorRef _client;
 
-        public OrderPlacement()
+        public OrderPlacement(/*IActorRef client*/)
         {
             _backOrders = new Queue<Order>();
+            //_client = client;
 
             ProcessOrder();
         }
@@ -49,6 +50,8 @@ namespace OrderProcessing.Actors
             Receive<Order>(order =>
             {
                 ColorConsole.WriteYellow("Order {0} is back ordered.", order.Id);
+
+                //_client.Tell(new BackOrder(order));
                 _backOrders.Enqueue(order);
             });
         }
